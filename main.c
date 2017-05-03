@@ -3,8 +3,28 @@
 
 #define CAM_HEIGHT 400.0
 
+struct lighting{
+	GLfloat amb [4];
+	GLfloat dif [4];
+	GLfloat pos [4];
+	GLfloat spe [4];
+	GLfloat yrot;
+}LIGHT_M;
+
 void init(void) {
+	glClearColor(0, 0, 0, 1.0);
 	glEnable(GL_DEPTH_TEST);
+	glFrontFace(GL_CCW);
+	glEnable(GL_CULL_FACE);
+
+
+
+	glEnable(GL_LIGHTING); //조명 켜기
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ); //설정
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight); //설정
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular); //설정
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition); //설정
+	glEnable(GL_LIGHT0); // 0번 조명 사용
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -16,8 +36,6 @@ void init(void) {
 }
 
 void display(void) {
-
-	glClearColor(0, 0, 0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glColor3f(1.0,1.0,1.0);
 
