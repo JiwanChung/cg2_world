@@ -31,6 +31,8 @@ void display_halo(GLfloat radius, GLfloat width, GLfloat thickness);
 
 void display_ring(GLfloat radius, GLfloat thickness, GLfloat y);
 
-void draw_triangle(GLfloat* a, GLfloat* b, GLfloat* c);
+void halo_draw_triangle(GLfloat v[][3], int a, int b, int c);
+
+void halo_draw_vertex(GLfloat v[][3], int a);
 
 #endif

@@ -12,7 +12,7 @@ void display_halo(GLfloat radius, GLfloat width, GLfloat thickness) {
 void display_ring(GLfloat radius, GLfloat width, GLfloat thickness) {
 	int i, j, k;
 	GLfloat rad, cos_r, sin_r;
-	GLfloat v[8][3];
+	GLfloat v[8][3]; //vertices and normals
 	GLfloat r[2];
 
 	r[0] = radius;
@@ -51,15 +51,20 @@ void display_ring(GLfloat radius, GLfloat width, GLfloat thickness) {
 			v[k][2] = -r[k%2] * sin_r;;
 			v[k][1] = -width/2.0;
 		}
+
+		//top
+		halo_draw_triangle(v,0,1,2);
+		halo_draw_triangle(v,3,2,1);
+		//bottom
+		halo_draw_triangle(v,6,5,4);
+		halo_draw_triangle(v,6,7,5);
+		//front
+		halo_draw_triangle(v,0,2,4);
+		halo_draw_triangle(v,6,4,2);
+		//back
+		halo_draw_triangle(v,1,5,3);
+		halo_draw_triangle(v,7,3,5);
 		
-		draw_triangle(v[0],v[2],v[4]);
-		draw_triangle(v[6],v[4],v[2]);
-		draw_triangle(v[0],v[1],v[2]);
-		draw_triangle(v[3],v[2],v[1]);
-		draw_triangle(v[5],v[3],v[1]);
-		draw_triangle(v[3],v[5],v[7]);
-		draw_triangle(v[6],v[5],v[4]);
-		draw_triangle(v[6],v[7],v[8]);
 
 		for(j=0; j<3; j++) {
 			v[0][j] = v[2][j];
@@ -73,8 +78,29 @@ void display_ring(GLfloat radius, GLfloat width, GLfloat thickness) {
 	glEnd();
 }
 
-void draw_triangle(GLfloat* a, GLfloat* b, GLfloat* c) {
-	glVertex3fv(a);
-	glVertex3fv(b);
-	glVertex3fv(c);
+void halo_draw_triangle(GLfloat v[][3], int a, int b, int c) {
+
+	halo_draw_vertex(v, a);
+	halo_draw_vertex(v, b);
+	halo_draw_vertex(v, c);
+}
+
+void halo_draw_vertex(GLfloat v[][3], int a) {
+	GLfloat normal[3];
+	if (a%2 == 0) {
+		//front vertices
+		normal[0] = 0 - v[a][0]; 
+		normal[2] = 0 - v[a][2];
+
+		normal[1] = v[a][1];
+	} else {
+		//back vertices
+		normal[0] = v[a][0] - 0; 
+		normal[2] = v[a][2] - 0;
+
+		normal[1] = v[a][1];
+	}
+
+	glNormal3fv(normal);
+	glVertex3fv(v[a]);
 }
