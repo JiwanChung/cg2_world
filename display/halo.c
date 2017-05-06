@@ -3,6 +3,7 @@
 void display_halo(GLfloat radius, GLfloat width, GLfloat thickness) {
 
 	glPushMatrix();
+	glFrontFace(GL_CCW);
 
 	display_ring(radius, width, thickness);
 
@@ -92,13 +93,13 @@ void halo_draw_vertex(GLfloat v[][3], int a) {
 		normal[0] = 0 - v[a][0]; 
 		normal[2] = 0 - v[a][2];
 
-		normal[1] = v[a][1];
+		normal[1] = 0;
 	} else {
 		//back vertices
 		normal[0] = v[a][0] - 0; 
 		normal[2] = v[a][2] - 0;
 
-		normal[1] = v[a][1];
+		normal[1] = 0;
 	}
 
 	glNormal3fv(normal);

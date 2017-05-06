@@ -14,7 +14,7 @@ void set_light(int n, Light_M M) {
 			break;
 
 	}
-	printf("light: %d, %d\n", n, gl_light_num);
+	//printf("light: %d, %d\n", n, gl_light_num);
 	glLightfv(gl_light_num, GL_AMBIENT, M.amb);
 	glLightfv(gl_light_num, GL_DIFFUSE, M.dif);
 	glLightfv(gl_light_num, GL_SPECULAR, M.spe);
@@ -34,13 +34,6 @@ void draw_sphere(GLfloat size, GLfloat color[3]) {
 }
 
 void draw_sun_sphere(GLfloat size, Light_M light) {
-	
-	draw_sphere(size, light.dif);
-}
-
-void toggle_light(int option) {
-	if (option == 0)
-		glDisable(GL_LIGHT0);
-	else if (option == 1)
-		glEnable(GL_LIGHT0);
+	GLfloat white[3] = {1.0,1.0,1.0};
+	draw_sphere(size, white);
 }

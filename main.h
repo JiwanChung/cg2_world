@@ -8,10 +8,11 @@
 
 #include "light/sun.h"
 
-#define CAM_HEIGHT 200.0
+#define CAM_HEIGHT 6.0
 #define CAM_DIVIDE 36
 #define PLANET_DIVIDE 36
 #define PLANET_R_MOVE 0.12
+#define CHIEF_MOVE 0.1
 
 typedef struct
 {
@@ -27,6 +28,10 @@ void init_variable(void);
 void set_light(int n, Light_M m);
 
 void init(void);
+
+void camera_birdview(void);
+
+void normalize(GLfloat* a);
 
 void display(void);
 
