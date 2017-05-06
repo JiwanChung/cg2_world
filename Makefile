@@ -1,4 +1,4 @@
-CC := gcc
+CC := g++
 CFLAG := -lGL -lGLU -lglut -lm
 
 program: main.o halo.o sun.o planet.o waa.o chief.o

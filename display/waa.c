@@ -7,6 +7,7 @@ void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floatin
 
 	glPushMatrix();
 
+	//animate_waa()
 	draw_thing(angle, leftright, size, floating);
 
 	glPopMatrix();

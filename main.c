@@ -10,6 +10,7 @@ int camera_toggle = 0;
 int light_toggle = 0;
 int cam_rotate = 9;
 int planet0_rotate = 0;
+int carrying_object = 0;
 
 GLfloat halo_r = 3.0;
 GLfloat halo_width = 0.5;
@@ -113,23 +114,30 @@ void normalize(GLfloat* a) {
 }
 
 void display(void) {
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearStencil(0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	if(camera_toggle < 1)
 		camera_birdview();
 	else
 		camera_firstperson(chief_pos[0], chief_pos[1], cheif_size, chief_pos[2]);
 
+	glStencilFunc(GL_ALWAYS, 1, -1);
 	set_material(Chrome);
 	display_halo(halo_r, halo_width, 0.1);
 
-	display_waa(10.0, 0, cheif_size, 0);
-
+	glStencilFunc(GL_ALWAYS, 2, -1);
 	display_chief(chief_pos[0], chief_pos[1], cheif_size, chief_pos[2]);
 
+	glStencilFunc(GL_ALWAYS, 3, -1);
 	draw_sun_sphere(0.15, Sun);
+	glStencilFunc(GL_ALWAYS, 4, -1);
 	draw_planet_sphere(0.10, planet0_r, 360.0/PLANET_DIVIDE*planet0_rotate, Planet0);
+
+	glStencilFunc(GL_ALWAYS, 5, -1);
+	display_waa(10.0, 0, cheif_size, 0);
 
 	glutSwapBuffers();
 }
@@ -227,22 +235,84 @@ void keyboard(unsigned char key, int x, int y) {
 			
 			glutPostRedisplay();
 			break;
+		case GLUT_KEY_UP:
+			//move the chosen object
+			if (carrying_object > 0) {
+				//plus angle
+
+				glutPostRedisplay();
+			}
+			break;
+		case GLUT_KEY_DOWN:
+			//move the chosen object
+			if (carrying_object > 0) {
+				//minus angle
+
+				glutPostRedisplay();
+			}
+			break;
+		case GLUT_KEY_F1:
+			//move the chosen object
+			if (carrying_object > 0) {
+				//minus leftright
+
+				glutPostRedisplay();
+			}
+			break;
+		case GLUT_KEY_RIGHT:
+			//move the chosen object
+			if (carrying_object > 0) {
+				//plus leftright
+
+				glutPostRedisplay();
+			}
+			break;
  	}
 }
 
 void mouse(int button, int state, int x, int y) {
+	int window_width, window_height;
+	if(state != GLUT_DOWN) {
+		carrying_object = 0;
+		return;
+	}
 
+	window_width = glutGet(GLUT_WINDOW_WIDTH);
+	window_height = glutGet(GLUT_WINDOW_HEIGHT);
+
+	GLbyte color[4];
+	GLfloat depth;
+	GLuint index;
+  
+	glReadPixels(x, window_height - y - 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
+	glReadPixels(x, window_height - y - 1, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	glReadPixels(x, window_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+	printf("Clicked on pixel %d, %d, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n",
+	x, y, color[0], color[1], color[2], color[3], depth, index);
+
+	if (index > 0) {
+		//catch object -> object clicked!
+		carrying_object = index;
+	}
+}
+
+void motion(int x, int y) {
+	if (carrying_object > 0) {
+
+	}
 }
 
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);   // not necessary unless on Unix
-	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
 	glutInitWindowSize (600, 600);
 	glutCreateWindow (argv[0]);
 	init();
 
 	glutReshapeFunc(reshape);       // register respace (anytime window changes)
 	glutKeyboardFunc(keyboard);
+	glutMouseFunc(mouse);
+	glutMotionFunc(motion);
 	glutDisplayFunc(display);       // register display function
 	glutIdleFunc (idle);             // reister idle function
 	glutMainLoop();

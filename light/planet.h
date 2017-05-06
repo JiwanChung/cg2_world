@@ -14,5 +14,6 @@
 #include "sun.h"
 
 void draw_planet_sphere(GLfloat size, GLfloat radius, GLfloat angle, Light_M light);
+void camera_planet0(GLfloat size, GLfloat radius, GLfloat angle);
 
 #endif
