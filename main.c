@@ -12,10 +12,12 @@ int cam_rotate = 9;
 int planet0_rotate = 0;
 
 GLfloat halo_r = 3.0;
+GLfloat halo_width = 0.5;
 GLfloat planet0_r = 1.5;
 GLfloat lookat[3] = {0,0,0};
 GLfloat chief_pos[3] = {0,0,0};
 GLfloat chief_theta = 3.0;
+GLfloat cheif_size = 0.01;
 
 Material_M PolishedGold = {{0.24725, 0.2245, 0.0645, 1.0},
                          {0.34615, 0.3143, 0.0903, 1.0},
@@ -91,6 +93,11 @@ void camera_birdview(void) {
 
 	theta = FULL_CIRCLE / CAM_DIVIDE * cam_rotate;
 	//printf("theta: %f\n", theta);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60,1.0,1.0,CAM_HEIGHT * 2);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 	gluLookAt(0,CAM_HEIGHT * sin(theta), CAM_HEIGHT * cos(theta)
 			,0,0,0
 			,1,0,0);
@@ -109,20 +116,17 @@ void display(void) {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
 	if(camera_toggle < 1)
 		camera_birdview();
 	else
-		camera_firstperson();
+		camera_firstperson(chief_pos[0], chief_pos[1], cheif_size, chief_pos[2]);
 
 	set_material(Chrome);
-	display_halo(halo_r, 0.1, 0.1);
+	display_halo(halo_r, halo_width, 0.1);
 
-	display_waa(10.0, 0, 0.3, 0);
+	display_waa(10.0, 0, cheif_size, 0);
 
-	display_chief(chief_pos[0], chief_pos[1], 0.3, chief_pos[2]);
+	display_chief(chief_pos[0], chief_pos[1], cheif_size, chief_pos[2]);
 
 	draw_sun_sphere(0.15, Sun);
 	draw_planet_sphere(0.10, planet0_r, 360.0/PLANET_DIVIDE*planet0_rotate, Planet0);
@@ -206,6 +210,21 @@ void keyboard(unsigned char key, int x, int y) {
 			chief_pos[0] -= CHIEF_MOVE;
 			if (chief_pos[0] > 360.0)
 				chief_pos[0] = chief_pos[0] - 360.0;
+			glutPostRedisplay();
+			break;
+		case 'a':
+			if (chief_pos[1] < -halo_width/2 + CHIEF_SIDE)
+				chief_pos[1] = -halo_width/2 + 2*CHIEF_SIDE;
+			else
+				chief_pos[1] -= CHIEF_SIDE;
+			glutPostRedisplay();
+			break;
+		case 'd':
+			if (chief_pos[1] > halo_width/2 - CHIEF_SIDE)
+				chief_pos[1] = halo_width/2 - 2*CHIEF_SIDE;
+			else
+				chief_pos[1] += CHIEF_SIDE;
+			
 			glutPostRedisplay();
 			break;
  	}

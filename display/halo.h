@@ -24,7 +24,7 @@
 #ifndef PI
 #define PI M_PI
 #endif
-#define RING_DIVISION 50
+#define RING_DIVISION 500
 #define FULL_CIRCLE 2*PI
 
 void display_halo(GLfloat radius, GLfloat width, GLfloat thickness);

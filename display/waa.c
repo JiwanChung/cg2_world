@@ -13,8 +13,6 @@ void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floatin
 }
 
 void draw_thing(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating) {
-	
-	glMatrixMode( GL_MODELVIEW );
 
 	// move to surface of the halo
 	glRotatef(angle, 0, 1, 0);
@@ -28,7 +26,7 @@ void draw_thing(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating
 
 
 	glFrontFace(GL_CW);
-	glutSolidTeapot(0.5);
+	glutSolidTeapot(1.0);
 	glFrontFace(GL_CCW);
 
 }

@@ -13,6 +13,7 @@
 #define PLANET_DIVIDE 36
 #define PLANET_R_MOVE 0.12
 #define CHIEF_MOVE 0.1
+#define CHIEF_SIDE 0.02
 
 typedef struct
 {
