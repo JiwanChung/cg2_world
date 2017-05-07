@@ -170,8 +170,10 @@ void display(void) {
 	glEnable(GL_STENCIL_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-	if(camera_toggle < 1)
+	if(camera_toggle <1)
 		camera_birdview();
+	else if(camera_toggle < 2)
+		camera_planet0(0.10, planet0_r, 360.0/PLANET_DIVIDE*planet0_rotate);
 	else
 		camera_firstperson(chief_pos[0], chief_pos[1], cheif_size, chief_pos[2]);
 
@@ -217,16 +219,12 @@ void keyboard(unsigned char key, int x, int y) {
 			exit(0);
 			break;
 		case '/':
-			if (camera_toggle==0)
-			{
-				camera_toggle = 1;
-				glutPostRedisplay();
-			} 
-			else if (camera_toggle==1)
-			{		
-	          		camera_toggle = 0;
-	          		glutPostRedisplay();
-			}
+			if (camera_toggle < 1)
+				camera_toggle ++;
+			else if (camera_toggle >= 2)
+				camera_toggle = 0;
+			
+			glutPostRedisplay();
 			break;
 		case 'm':
 			if (light_toggle==0)

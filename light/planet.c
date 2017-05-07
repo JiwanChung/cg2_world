@@ -1,5 +1,7 @@
 #include "planet.h"
 
+extern GLfloat halo_r;
+
 void draw_planet_sphere(GLfloat size, GLfloat radius, GLfloat angle, Light_M light) {
 	GLfloat lightpos[4] = {0,0,0,1};
 
@@ -15,27 +17,24 @@ void draw_planet_sphere(GLfloat size, GLfloat radius, GLfloat angle, Light_M lig
 	glPopMatrix(); 
 }
 
-/*
 void camera_planet0(GLfloat size, GLfloat radius, GLfloat angle) {
 	
-	GLfloat length, angle_eye, angle_at;
-	GLfloat point[2], point2[2];
-	GLfloat base_M [16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+	GLfloat length, angle_eye, rad_at;
 
 	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity ();
+	glLoadIdentity();
 	gluPerspective (60, 1.0, 0.001, 1000.0); 
-	glMatrixMode( GL_MODELVIEW );
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	length = (halo_r - floating - size/2.0);
-	angle_eye = to_radian(2* (angle + NOSE_CUT));
-	angle_at =  to_radian(2* (angle + chief_theta));
+	length = radius;
+	angle_eye = (2* (angle + PLANET_NOSE_CUT)) /360.0*M_PI;
+	rad_at =  halo_r;
 	//align axis
-	gluLookAt(length * cos(angle_eye), (leftright), -length * sin(angle_eye),
-			length * cos(angle_at), (leftright), -length * sin(angle_at),
-			-length * cos(angle_eye),0,-length * sin(angle_eye));
+	gluLookAt(length * cos(angle_eye), 0, -length * sin(angle_eye),
+			rad_at * cos(angle_eye), 0, -rad_at * sin(angle_eye),
+			0,1,0);
 	//translate
 	//glTranslatef(- length * cos(angle_eye), -(leftright), length * sin(angle_eye));
 
-}*/
+}

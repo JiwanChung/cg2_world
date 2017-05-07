@@ -25,8 +25,6 @@ float sqr(float a) {
 void camera_firstperson(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating) {
 	
 	GLfloat length, angle_eye, angle_at;
-	GLfloat point[2], point2[2];
-	GLfloat base_M [16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
