@@ -55,5 +55,5 @@ void display_bullet(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floa
 	GLfloat movement;
 
 	movement = (1 - cos(M_PI * time / 2.0))*3;
-	draw_thing(angle + BULLET_FRONT + movement, leftright, 0.001, floating + size/2.0 + BULLET_UP , -1, 0);
+	draw_thing(angle + BULLET_FRONT + movement, leftright, BULLET_SIZE, floating + size/2.0 + BULLET_UP , -1, 0);
 }

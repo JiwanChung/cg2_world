@@ -1,3 +1,3 @@
-call sudo apt-get update;
-call sudo apt-get install freeglut3;
-call sudo apt-get install libglew libglew-dev;
+sudo apt-get update;
+sudo apt-get install freeglut3;
+sudo apt-get install libglew1.5 libglew1.5-dev;

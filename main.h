@@ -72,6 +72,8 @@ typedef enum
 
 } Clicked;
 
+bool collision_detection(GLfloat angle_a, GLfloat angle_b, GLfloat size_a, GLfloat size_b);
+
 void init_variable(void);
 
 void set_light(int n, Light_M m);

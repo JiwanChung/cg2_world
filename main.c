@@ -58,8 +58,25 @@ Light_M Planet0 = {{0.2, 0.2, 0.2, 1.0},
 
 Light_M light_temp;
 
-void init_variable(void) {
+bool collision_detection(GLfloat angle_a, GLfloat angle_b, GLfloat size_a, GLfloat size_b) {
+	GLfloat distance, angle;
 
+	angle = fabs((angle_a - angle_b)/2.0);
+	distance = cos(angle) * halo_r * 2;
+	return distance <= (size_a + size_b)/2.0;
+}
+
+void init_variable(void) {
+	Waa a_waa;
+
+	a_waa.size = 0.01;
+	a_waa.leftright = 0;
+	a_waa.angle = 12;
+	a_waa.floating = 0;
+	a_waa.stencil = 5;
+	a_waa.anim = 0;
+	a_waa.time = 0;
+	waa_vector.push_back(a_waa);
 }
 
 void set_material(Material_M M)
@@ -71,7 +88,7 @@ void set_material(Material_M M)
 }
 
 void init(void) {
-	Waa a_waa;
+	
 
 	glClearColor(0, 0, 0, 1.0);
 	glEnable(GL_DEPTH_TEST);
@@ -102,14 +119,7 @@ void init(void) {
 	camera_toggle = 0;
 	light_toggle = 1;
 
-	a_waa.size = 0.01;
-	a_waa.leftright = 0;
-	a_waa.angle = 12;
-	a_waa.floating = 0;
-	a_waa.stencil = 5;
-	a_waa.anim = 0;
-	a_waa.time = 0;
-	waa_vector.push_back(a_waa);
+	init_variable();
 	//bullet_vector.push_back(0.0);
 }
 
