@@ -7,15 +7,16 @@ extern GLfloat halo_width;
 void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time) {
 
 	glStencilFunc(GL_ALWAYS, 5, -1);
-	glPushMatrix();
+	
 
 	
 	draw_thing(angle, leftright, size, floating, anim, time);
 
-	glPopMatrix();
+	
 }
 
 void draw_thing(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time) {
+	glPushMatrix();
 
 	// move to surface of the halo
 	glRotatef(angle, 0, 1, 0);
@@ -32,6 +33,8 @@ void draw_thing(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating
 	glFrontFace(GL_CW);
 	glutSolidTeapot(1.0);
 	glFrontFace(GL_CCW);
+
+	glPopMatrix();
 
 }
 

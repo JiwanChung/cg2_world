@@ -7,10 +7,11 @@
 #endif
 
 #define NOSE_CUT 0.23
+#define BULLET_FRONT NOSE_CUT+0.1
+#define BULLET_UP -0.003
 
 void display_chief(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating);
 void camera_firstperson(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating);
 float sqr(float a);
-void change_basis(GLfloat* at_point, GLfloat* eye_point, GLfloat* M);
-
+void display_bullet(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, GLfloat time);
 #endif

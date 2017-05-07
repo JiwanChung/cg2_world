@@ -30,6 +30,7 @@
 
 #define FONT GLUT_BITMAP_TIMES_ROMAN_24
 #define TIME_UNIT 0.2
+#define BULLET_TIME 0.05
 #define CAM_HEIGHT 6.0
 #define CAM_DIVIDE 36
 #define PLANET_DIVIDE 36
@@ -38,6 +39,7 @@
 #define CHIEF_SIDE 0.02
 #define OBJECT_MOVE 0.2
 #define OBJECT_SIDE 0.02
+#define JUMP_LIMIT 30
 
 using namespace std;
 
@@ -97,6 +99,9 @@ void mouse(int button, int state, int x, int y);
 void motion(int x, int y);
 
 void timer(int nouse);
+
+void shoot();
+void bullettimer(int nouse);
 
 int main(int argc, char** argv);
 

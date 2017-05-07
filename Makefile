@@ -22,4 +22,4 @@ waa.o: display/waa.c display/waa.h main.h
 	$(CC) -c display/waa.c display/waa.h main.h
 
 chief.o: display/chief.c display/chief.h display/waa.h main.h
-	$(CC) -c display/chief.c display/chief.h display/waa.h main.h
+	$(CC) -c display/chief.c display/chief.h display/waa.h main.h $(VECTOR) 

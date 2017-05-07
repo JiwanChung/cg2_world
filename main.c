@@ -23,9 +23,13 @@ GLfloat chief_pos[3] = {0,0,0};
 GLfloat chief_theta = 3.0;
 GLfloat cheif_size = 0.01;
 
+bool jumping = false;
+GLfloat chief_jump_count = 0;
+
 Clicked clicked_object = c_false;
 
 vector<Waa> waa_vector;
+vector<GLfloat> bullet_vector;
 
 Material_M PolishedGold = {{0.24725, 0.2245, 0.0645, 1.0},
                          {0.34615, 0.3143, 0.0903, 1.0},
@@ -103,9 +107,10 @@ void init(void) {
 	a_waa.angle = 12;
 	a_waa.floating = 0;
 	a_waa.stencil = 5;
-	a_waa.anim = 4;
+	a_waa.anim = 0;
 	a_waa.time = 0;
 	waa_vector.push_back(a_waa);
+	//bullet_vector.push_back(0.0);
 }
 
 void camera_birdview(void) {
@@ -213,13 +218,49 @@ void idle(void) {
 	glutPostRedisplay();
 }
 
+void chief_jump(int count) {
+	if(count > JUMP_LIMIT) {
+		jumping = false;
+		return;
+	} else{
+		chief_jump_count += TIME_UNIT;
+		glutTimerFunc(30, chief_jump, count+1);
+	}
+}
+
+void shoot() {
+	if (bullet_vector.empty()) {
+		bullet_vector.push_back(0);
+		glutTimerFunc(30, bullettimer, 0);
+	} else {
+		bullet_vector.push_back(0);
+	}
+}
+
+void bullettimer(int nouse) {
+	printf("timer\n");
+	for (auto a=begin(bullet_vector); a!=end(bullet_vector); ++a) {
+		*a += BULLET_TIME;
+		if (*a >= 2.0) {
+			a = bullet_vector.erase(a);
+			if (bullet_vector.empty()) {
+				return;
+			}
+		}
+	}
+
+	if (!bullet_vector.empty()) {
+		glutTimerFunc(30, bullettimer, 0);
+	}
+}
+
 void keyboard(unsigned char key, int x, int y) {
 	switch (key) {
 		case 27:  /*  Escape Key  */
 			exit(0);
 			break;
-		case '/':
-			if (camera_toggle < 1)
+		case ' ':
+			if (camera_toggle < 2)
 				camera_toggle ++;
 			else if (camera_toggle >= 2)
 				camera_toggle = 0;
@@ -234,14 +275,27 @@ void keyboard(unsigned char key, int x, int y) {
 			} 
 			else if (light_toggle==1)
 			{
-          		light_toggle = 0;
-          		glutPostRedisplay();
+		 		light_toggle = 0;
+				glutPostRedisplay();
 			}
 			break;
 		case '.':
 			cam_rotate += 1;
 			if (cam_rotate >= CAM_DIVIDE)
 				cam_rotate = 0;
+			glutPostRedisplay();
+			break;
+		case 13: //Enter key
+			if (jumping != true) {
+
+				jumping = true;
+				chief_jump_count = 0;
+				glutTimerFunc(30, chief_jump, 1);
+			}
+			glutPostRedisplay();
+			break;
+		case 'x': //shooting bullets
+			shoot();
 			glutPostRedisplay();
 			break;
 		case 'i':
