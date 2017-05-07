@@ -4,7 +4,8 @@
 extern GLfloat halo_r;
 
 void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating) {
-
+	
+	glStencilFunc(GL_ALWAYS, 5, -1);
 	glPushMatrix();
 
 	//animate_waa()

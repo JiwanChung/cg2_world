@@ -1,6 +1,11 @@
 #ifndef planet_h
 #define planet_h
 
+#ifndef glew_h
+#define glew_h
+#include <GL/glew.h>
+#endif
+
 #ifndef glut_h
 #include <GL/glut.h>
 #define glut_h

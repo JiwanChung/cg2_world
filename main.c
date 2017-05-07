@@ -1,6 +1,6 @@
 
-#include "light/sun.h"
 #include "main.h"
+#include "light/sun.h"
 #include "display/halo.h" 
 #include "display/waa.h" 
 #include "display/chief.h" 
@@ -10,7 +10,10 @@ int camera_toggle = 0;
 int light_toggle = 0;
 int cam_rotate = 9;
 int planet0_rotate = 0;
-int carrying_object = 0;
+int carrying_object = -1;
+
+int window_width = 600;
+int window_height = 600;
 
 GLfloat halo_r = 3.0;
 GLfloat halo_width = 0.5;
@@ -19,6 +22,10 @@ GLfloat lookat[3] = {0,0,0};
 GLfloat chief_pos[3] = {0,0,0};
 GLfloat chief_theta = 3.0;
 GLfloat cheif_size = 0.01;
+
+Clicked clicked_object = c_false;
+
+vector<Waa> waa_vector;
 
 Material_M PolishedGold = {{0.24725, 0.2245, 0.0645, 1.0},
                          {0.34615, 0.3143, 0.0903, 1.0},
@@ -60,6 +67,8 @@ void set_material(Material_M M)
 }
 
 void init(void) {
+	Waa a_waa;
+
 	glClearColor(0, 0, 0, 1.0);
 	glEnable(GL_DEPTH_TEST);
 	glFrontFace(GL_CCW);
@@ -87,6 +96,13 @@ void init(void) {
 
 	camera_toggle = 0;
 	light_toggle = 1;
+
+	a_waa.size = 0.01;
+	a_waa.leftright = 0;
+	a_waa.angle = 12;
+	a_waa.floating = 0;
+	a_waa.stencil = 5;
+	waa_vector.push_back(a_waa);
 }
 
 void camera_birdview(void) {
@@ -113,7 +129,27 @@ void normalize(GLfloat* a) {
 	a[2] = a[2] / base;
 }
 
+//chracter drawing
+void draw_string(GLfloat x, GLfloat y, char *string) {
+	char *p;
+
+	glPushMatrix();
+	/*glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();*/
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0,1.0,1.0);
+	glWindowPos2i(x,y);
+	for(p=string;*p != '\0';p++) {
+		glutBitmapCharacter(FONT, *p);
+	}
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+}
+
 void display(void) {
+
 	glClearStencil(0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glEnable(GL_STENCIL_TEST);
@@ -136,17 +172,28 @@ void display(void) {
 	glStencilFunc(GL_ALWAYS, 4, -1);
 	draw_planet_sphere(0.10, planet0_r, 360.0/PLANET_DIVIDE*planet0_rotate, Planet0);
 
-	glStencilFunc(GL_ALWAYS, 5, -1);
-	display_waa(10.0, 0, cheif_size, 0);
+	for (Waa a_waa : waa_vector) {
+		glStencilFunc(GL_ALWAYS, a_waa.stencil, -1);
+		display_waa(a_waa.angle, a_waa.leftright, a_waa.size, a_waa.floating);
+	}
+
+	draw_string(window_width- 150,window_height-30, (char*)"Selected: ");
+
+	if (carrying_object > -1)
+		draw_string(window_width- 60,window_height-30, (char*)to_string(carrying_object).c_str());
+	else
+		draw_string(window_width- 60,window_height-30, (char*)"none");
 
 	glutSwapBuffers();
 }
 
 void reshape(int w, int h) {
-
+	window_height = h;
+	window_width = w;
 }
 
 void idle(void) {
+	glutPostRedisplay();
 }
 
 void keyboard(unsigned char key, int x, int y) {
@@ -235,78 +282,120 @@ void keyboard(unsigned char key, int x, int y) {
 			
 			glutPostRedisplay();
 			break;
-		case GLUT_KEY_UP:
+		case 't':
 			//move the chosen object
-			if (carrying_object > 0) {
-				//plus angle
-
-				glutPostRedisplay();
-			}
+			move_object(key);
+			glutPostRedisplay();
 			break;
-		case GLUT_KEY_DOWN:
+		case 'g':
 			//move the chosen object
-			if (carrying_object > 0) {
-				//minus angle
-
-				glutPostRedisplay();
-			}
+			move_object(key);
+			glutPostRedisplay();
 			break;
-		case GLUT_KEY_F1:
+		case 'f':
 			//move the chosen object
-			if (carrying_object > 0) {
-				//minus leftright
-
-				glutPostRedisplay();
-			}
+			move_object(key);
+			glutPostRedisplay();
 			break;
-		case GLUT_KEY_RIGHT:
+		case 'h':
 			//move the chosen object
-			if (carrying_object > 0) {
-				//plus leftright
-
-				glutPostRedisplay();
-			}
+			move_object(key);
+			glutPostRedisplay();
 			break;
  	}
 }
 
 void mouse(int button, int state, int x, int y) {
-	int window_width, window_height;
-	if(state != GLUT_DOWN) {
-		carrying_object = 0;
+	if(state == GLUT_UP) {
 		return;
 	}
+	if (clicked_object == c_false) {
+		printf("clicked: %d\n", (int)clicked_object);
 
-	window_width = glutGet(GLUT_WINDOW_WIDTH);
-	window_height = glutGet(GLUT_WINDOW_HEIGHT);
+		int window_width, window_height;
 
-	GLbyte color[4];
-	GLfloat depth;
-	GLuint index;
-  
-	glReadPixels(x, window_height - y - 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
-	glReadPixels(x, window_height - y - 1, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-	glReadPixels(x, window_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
-	printf("Clicked on pixel %d, %d, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n",
-	x, y, color[0], color[1], color[2], color[3], depth, index);
+		window_width = glutGet(GLUT_WINDOW_WIDTH);
+		window_height = glutGet(GLUT_WINDOW_HEIGHT);
 
-	if (index > 0) {
-		//catch object -> object clicked!
-		carrying_object = index;
+		GLbyte color[4];
+		GLfloat depth;
+		GLuint index;
+	  
+		glReadPixels(x, window_height - y - 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
+		glReadPixels(x, window_height - y - 1, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+		glReadPixels(x, window_height - y - 1, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+		printf("Clicked on pixel %d, %d, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n",
+		x, y, color[0], color[1], color[2], color[3], depth, index);
+
+		if (index > 0) {
+			//catch object -> object clicked!
+			carrying_object = index;
+		}
+
+		clicked_object = c_true;
+	} else {
+		printf("unclicked: %d\n", (int)clicked_object);
+
+		carrying_object = -1;
+		clicked_object = c_false;
 	}
 }
 
 void motion(int x, int y) {
-	if (carrying_object > 0) {
+	
+}
 
+void move_object(char key) {
+	Waa b_waa = { 0,0,0,0,0,0,-1};
+	int index = -1;
+	// check if carrying anything
+	if (carrying_object > -1) {
+		for (auto it = waa_vector.begin(); it != waa_vector.end(); ++it) {
+			if (it->stencil == carrying_object) {
+				index = distance(waa_vector.begin(), it);
+				b_waa = *it;
+				break;
+			}
+		}
+
+		if(b_waa.stencil > -1) {
+			//move object
+			switch (key) {
+				case 't':
+					b_waa.angle += OBJECT_MOVE;
+					waa_vector[index] = b_waa;
+					break;
+				case 'g':
+					b_waa.angle -= OBJECT_MOVE;
+					waa_vector[index] = b_waa;
+					break;
+				case 'f':
+					if (b_waa.leftright < -halo_width/2 + OBJECT_SIDE)
+						b_waa.leftright = -halo_width/2 + 2*OBJECT_SIDE;
+					else
+						b_waa.leftright -= OBJECT_SIDE;
+					waa_vector[index] = b_waa;
+					break;
+				case 'h':
+					if (b_waa.leftright > halo_width/2 - OBJECT_SIDE)
+						b_waa.leftright = halo_width/2 - 2*OBJECT_SIDE;
+					else
+						b_waa.leftright += OBJECT_SIDE;
+					waa_vector[index] = b_waa;
+					break;
+				default:
+					break;
+			}
+		}
 	}
 }
 
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);   // not necessary unless on Unix
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
-	glutInitWindowSize (600, 600);
+	glutInitWindowSize (window_width, window_height);
 	glutCreateWindow (argv[0]);
+	glewInit();
 	init();
 
 	glutReshapeFunc(reshape);       // register respace (anytime window changes)
