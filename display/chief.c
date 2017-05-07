@@ -13,7 +13,7 @@ void display_chief(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat float
 	
 	glPushMatrix();
 
-	draw_thing(angle, leftright, size, floating);
+	draw_thing(angle, leftright, size, floating, -1, 0);
 
 	glPopMatrix();
 }

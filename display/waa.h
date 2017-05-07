@@ -16,10 +16,20 @@
 #define math_h
 #endif
 
-void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating);
+void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time);
 
-void draw_thing(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating);
+void draw_thing(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time);
 
 GLfloat to_radian(GLfloat degree);
+
+void animate_waa(int anim, GLfloat time);
+
+void rotate_waa(GLfloat time);
+
+void rotate_cos_waa(GLfloat time);
+
+void sidemove_waa(GLfloat time);
+
+void jump_waa(GLfloat time);
 
 #endif

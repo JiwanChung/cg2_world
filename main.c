@@ -93,6 +93,7 @@ void init(void) {
 	/*glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glEnable(GL_POLYGON_OFFSET_LINE);
 	glPolygonOffset(-1.0,-1.0);*/
+	glutTimerFunc(30, timer, 0);
 
 	camera_toggle = 0;
 	light_toggle = 1;
@@ -102,6 +103,8 @@ void init(void) {
 	a_waa.angle = 12;
 	a_waa.floating = 0;
 	a_waa.stencil = 5;
+	a_waa.anim = 4;
+	a_waa.time = 0;
 	waa_vector.push_back(a_waa);
 }
 
@@ -148,6 +151,18 @@ void draw_string(GLfloat x, GLfloat y, char *string) {
 	glPopMatrix();
 }
 
+void progress_time() {
+	Waa a_waa;
+
+	for (auto it = waa_vector.begin(); it != waa_vector.end(); ++it) {
+		//printf("tb: %f, ", it->time);
+		a_waa = *it;
+		a_waa.time += TIME_UNIT;
+		*it = a_waa;
+		//printf("tf: %f\n", it->time);
+	}
+}
+
 void display(void) {
 
 	glClearStencil(0);
@@ -174,12 +189,12 @@ void display(void) {
 
 	for (Waa a_waa : waa_vector) {
 		glStencilFunc(GL_ALWAYS, a_waa.stencil, -1);
-		display_waa(a_waa.angle, a_waa.leftright, a_waa.size, a_waa.floating);
+		display_waa(a_waa.angle, a_waa.leftright, a_waa.size, a_waa.floating, a_waa.anim, a_waa.time);
 	}
 
 	draw_string(window_width- 150,window_height-30, (char*)"Selected: ");
 
-	if (carrying_object > -1)
+	if (carrying_object > 4)
 		draw_string(window_width- 60,window_height-30, (char*)to_string(carrying_object).c_str());
 	else
 		draw_string(window_width- 60,window_height-30, (char*)"none");
@@ -309,7 +324,7 @@ void mouse(int button, int state, int x, int y) {
 	if(state == GLUT_UP) {
 		return;
 	}
-	if (clicked_object == c_false) {
+	if (clicked_object == c_false || carrying_object < 5) {
 		printf("clicked: %d\n", (int)clicked_object);
 
 		int window_width, window_height;
@@ -349,7 +364,7 @@ void move_object(char key) {
 	Waa b_waa = { 0,0,0,0,0,0,-1};
 	int index = -1;
 	// check if carrying anything
-	if (carrying_object > -1) {
+	if (carrying_object > 4) {
 		for (auto it = waa_vector.begin(); it != waa_vector.end(); ++it) {
 			if (it->stencil == carrying_object) {
 				index = distance(waa_vector.begin(), it);
@@ -390,6 +405,12 @@ void move_object(char key) {
 	}
 }
 
+void timer(int nouse) {
+	progress_time();
+	glutPostRedisplay();
+	glutTimerFunc(30, timer, 0);
+}
+
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);   // not necessary unless on Unix
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
@@ -403,7 +424,7 @@ int main(int argc, char** argv) {
 	glutMouseFunc(mouse);
 	glutMotionFunc(motion);
 	glutDisplayFunc(display);       // register display function
-	glutIdleFunc (idle);             // reister idle function
+	glutIdleFunc (idle);           // reister idle function
 	glutMainLoop();
 	return 0;
 }
