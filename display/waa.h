@@ -16,7 +16,9 @@
 #define math_h
 #endif
 
-void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time);
+void set_waa_material(int x);
+
+void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time, int material);
 
 void draw_thing(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time);
 

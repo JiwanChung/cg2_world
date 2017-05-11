@@ -5,6 +5,7 @@
 #include "display/waa.h" 
 #include "display/chief.h" 
 #include "light/planet.h"
+#include "file/obj.h"
 
 int camera_toggle = 0;
 int light_toggle = 0;
@@ -53,30 +54,61 @@ Light_M Sun = {{0.2, 0.2, 0.2, 1.0},
 
 Light_M Planet0 = {{0.2, 0.2, 0.2, 1.0},
 			{0.8,0.6,0.6,1.0},
-			{0,0,0,1.0},
+			{0.8,0.6,0.6,1.0},
 			{0,0,0,1}};
 
 Light_M light_temp;
 
-bool collision_detection(GLfloat angle_a, GLfloat angle_b, GLfloat size_a, GLfloat size_b) {
-	GLfloat distance, angle;
+void populate(void) {
+	int i;
+	Waa a_waa;
 
-	angle = fabs((angle_a - angle_b)/2.0);
-	distance = cos(angle) * halo_r * 2;
-	return distance <= (size_a + size_b)/2.0;
+	srand (time(NULL));
+
+	for (i=0;i<POPULATION;i++) {
+		a_waa.angle = (GLfloat)rand()/(GLfloat)(RAND_MAX/360.0);
+    		a_waa.leftright = -halo_width/2.0 + (GLfloat)rand()/(GLfloat)(RAND_MAX/(halo_width));
+		a_waa.size = 0.005+ (GLfloat)rand()/(GLfloat)(RAND_MAX/0.01);
+		a_waa.floating = 0;//(GLfloat)rand()/(GLfloat)(RAND_MAX/0.02);
+		a_waa.time = 0;
+		a_waa.anim = rand() % 5;
+		a_waa.stencil = i + 5;
+		a_waa.material = rand() % 5;
+
+		waa_vector.push_back(a_waa);
+	}
+}
+
+void add_one_waa(void) {
+	int i;
+	Waa a_waa;
+
+	srand (time(NULL));
+
+	a_waa.angle = (GLfloat)rand()/(GLfloat)(RAND_MAX/360.0);
+    	a_waa.leftright = -halo_width/2.0 + (GLfloat)rand()/(GLfloat)(RAND_MAX/(halo_width));
+	a_waa.size = 0.005+ (GLfloat)rand()/(GLfloat)(RAND_MAX/0.01);
+	a_waa.floating = (GLfloat)rand()/(GLfloat)(RAND_MAX/0.02);
+	a_waa.time = 0;
+	a_waa.anim = rand() % 5;
+	a_waa.stencil = waa_vector.size() + 5;
+
+	waa_vector.push_back(a_waa);
+}
+
+bool collision_detection(GLfloat angle_a, GLfloat size_a, GLfloat leftright_a, GLfloat floating_a, GLfloat angle_b, GLfloat size_b, GLfloat leftright_b, GLfloat floating_b) {
+	GLfloat distance, distance_circle, distance_leftright, distance_floating, angle;
+
+	angle = fabs((angle_a - angle_b)/2.0)/180*M_PI;
+	distance_circle = sin(angle) * halo_r * 2;
+	distance_leftright = fabs(leftright_a - leftright_b);
+	distance_floating = fabs(floating_a - floating_b);
+	distance = sqrt(distance_circle * distance_circle + distance_leftright * distance_leftright + distance_floating * distance_floating);
+	return distance <= (size_a + size_b);
 }
 
 void init_variable(void) {
-	Waa a_waa;
-
-	a_waa.size = 0.01;
-	a_waa.leftright = 0;
-	a_waa.angle = 12;
-	a_waa.floating = 0;
-	a_waa.stencil = 5;
-	a_waa.anim = 0;
-	a_waa.time = 0;
-	waa_vector.push_back(a_waa);
+	populate();
 }
 
 void set_material(Material_M M)
@@ -206,7 +238,7 @@ void display(void) {
 
 	for (Waa a_waa : waa_vector) {
 		glStencilFunc(GL_ALWAYS, a_waa.stencil, -1);
-		display_waa(a_waa.angle, a_waa.leftright, a_waa.size, a_waa.floating, a_waa.anim, a_waa.time);
+		display_waa(a_waa.angle, a_waa.leftright, a_waa.size, a_waa.floating, a_waa.anim, a_waa.time, a_waa.material);
 	}
 
 	draw_string(window_width- 150,window_height-30, (char*)"Selected: ");
@@ -225,6 +257,27 @@ void reshape(int w, int h) {
 }
 
 void idle(void) {
+	GLfloat bullet_angle, bullet_leftright, bullet_size, bullet_floating;
+	bullet_size = BULLET_SIZE;
+	bullet_leftright = chief_pos[1];
+	bullet_floating = chief_pos[2];
+
+	for (auto a=begin(waa_vector); a!=end(waa_vector); ++a) {
+		for(GLfloat time : bullet_vector) {
+			bullet_angle = chief_pos[0] + BULLET_FRONT + (1 - cos(M_PI * time / 2.0))*3;
+			if(collision_detection(bullet_angle, bullet_size, bullet_leftright, bullet_floating, a->angle, a->size, a->leftright, a->floating)) {
+				// shot
+				a = waa_vector.erase(a);
+				add_one_waa();
+				break;
+			}
+		}
+		if (waa_vector.empty()) {
+			return;
+		}
+		
+	}
+
 	glutPostRedisplay();
 }
 
@@ -248,7 +301,7 @@ void shoot() {
 }
 
 void bullettimer(int nouse) {
-	printf("timer\n");
+	//printf("timer\n");
 	for (auto a=begin(bullet_vector); a!=end(bullet_vector); ++a) {
 		*a += BULLET_TIME;
 		if (*a >= 2.0) {

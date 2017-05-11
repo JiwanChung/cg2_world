@@ -26,6 +26,16 @@
 #include <vector>
 #endif
 
+#ifndef stdlib_h
+#define stdlib_h
+#include <stdlib.h>
+#endif
+
+#ifndef time_h
+#define time_h
+#include <time.h>
+#endif 
+
 #include "light/sun.h"
 
 #define FONT GLUT_BITMAP_TIMES_ROMAN_24
@@ -36,10 +46,12 @@
 #define PLANET_DIVIDE 36
 #define PLANET_R_MOVE 0.12
 #define CHIEF_MOVE 0.1
-#define CHIEF_SIDE 0.02
+#define CHIEF_SIDE 0.005
 #define OBJECT_MOVE 0.2
 #define OBJECT_SIDE 0.02
 #define JUMP_LIMIT 30
+#define POPULATION 30
+
 
 using namespace std;
 
@@ -60,6 +72,7 @@ typedef struct
     GLfloat floating;
     GLfloat time;
     GLfloat acc;
+    int material;
     int anim;
     int stencil;
 
@@ -71,6 +84,10 @@ typedef enum
    c_true
 
 } Clicked;
+
+void populate(void);
+
+void add_one_waa(void);
 
 bool collision_detection(GLfloat angle_a, GLfloat angle_b, GLfloat size_a, GLfloat size_b);
 

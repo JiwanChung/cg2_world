@@ -4,15 +4,50 @@
 extern GLfloat halo_r;
 extern GLfloat halo_width;
 
-void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time) {
+extern Material_M PolishedGold;
+                          
+extern Material_M Pearl;
+
+extern Material_M Chrome;
+
+void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time, int material) {
 
 	glStencilFunc(GL_ALWAYS, 5, -1);
 	
 
-	
+	set_waa_material(material);
 	draw_thing(angle, leftright, size, floating, anim, time);
 
 	
+}
+
+void set_waa_material(int x) {
+	Material_M M;
+
+	switch(x) {
+		case 0:
+			M = PolishedGold;
+			break;
+		case 1:
+			M = Pearl;
+			break;
+		case 2:
+			M = Chrome;
+			break;
+		case 3:
+			M = PolishedGold;
+			break;
+		case 4:
+			M = PolishedGold;
+			break;
+		default:
+			M = PolishedGold;
+			break;
+	}
+	glMaterialfv(GL_FRONT, GL_SPECULAR, M.spe);
+    	glMaterialfv(GL_FRONT, GL_AMBIENT, M.amb);
+    	glMaterialfv(GL_FRONT, GL_DIFFUSE, M.dif);
+    	glMaterialf(GL_FRONT, GL_SHININESS, M.shi);
 }
 
 void draw_thing(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time) {
