@@ -1,5 +1,7 @@
 #include "waa.h"
 #include "../main.h"
+#include "../file/obj.h"
+
 
 extern GLfloat halo_r;
 extern GLfloat halo_width;
@@ -65,9 +67,10 @@ void draw_thing(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating
 
 	animate_waa(anim, time);
 
-	glFrontFace(GL_CW);
+	/*glFrontFace(GL_CW);
 	glutSolidTeapot(1.0);
-	glFrontFace(GL_CCW);
+	glFrontFace(GL_CCW);*/
+	render_object();
 
 	glPopMatrix();
 

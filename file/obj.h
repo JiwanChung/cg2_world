@@ -6,6 +6,11 @@
 #define glut_h
 #endif
 
+#ifndef stdio_h
+#define stdio_h
+#include <stdio.h>
+#endif
 
+void render_object(void);
 
 #endif

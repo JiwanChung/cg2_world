@@ -31,6 +31,8 @@ Clicked clicked_object = c_false;
 
 vector<Waa> waa_vector;
 vector<GLfloat> bullet_vector;
+vector<Point> obj_point_vector;
+vector<Point> obj_normal_vector;
 
 Material_M PolishedGold = {{0.24725, 0.2245, 0.0645, 1.0},
                          {0.34615, 0.3143, 0.0903, 1.0},

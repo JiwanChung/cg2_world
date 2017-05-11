@@ -66,6 +66,14 @@ typedef struct
 
 typedef struct
 {
+    GLfloat x;
+    GLfloat y;
+    GLfloat z;
+  
+} Point;
+
+typedef struct
+{
     GLfloat angle;
     GLfloat leftright;
     GLfloat size;
