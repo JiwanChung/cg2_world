@@ -16,9 +16,6 @@ extern Material_M Chrome;
 
 void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating, int anim, GLfloat time, int material) {
 
-	glStencilFunc(GL_ALWAYS, 5, -1);
-	
-
 	set_waa_material(material);
 	draw_thing(angle, leftright, size, floating, anim, time);
 }
