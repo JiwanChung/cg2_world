@@ -3,6 +3,8 @@
 #include "../file/obj.h"
 
 
+extern bool loaded;
+
 extern GLfloat halo_r;
 extern GLfloat halo_width;
 
@@ -19,8 +21,6 @@ void display_waa(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floatin
 
 	set_waa_material(material);
 	draw_thing(angle, leftright, size, floating, anim, time);
-
-	
 }
 
 void set_waa_material(int x) {
@@ -67,10 +67,12 @@ void draw_thing(GLfloat angle, GLfloat leftright, GLfloat size, GLfloat floating
 
 	animate_waa(anim, time);
 
-	/*glFrontFace(GL_CW);
-	glutSolidTeapot(1.0);
-	glFrontFace(GL_CCW);*/
-	render_object();
+	if (! loaded) {
+		glFrontFace(GL_CW);
+		glutSolidTeapot(1.0);
+		glFrontFace(GL_CCW);
+	} else
+		render_object();
 
 	glPopMatrix();
 

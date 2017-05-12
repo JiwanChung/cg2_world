@@ -104,6 +104,8 @@ void populate(void);
 
 void add_one_waa(void);
 
+void check_collision(void);
+
 bool collision_detection(GLfloat angle_a, GLfloat angle_b, GLfloat size_a, GLfloat size_b);
 
 void init_variable(void);

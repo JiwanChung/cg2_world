@@ -25,6 +25,7 @@ GLfloat chief_theta = 3.0;
 GLfloat cheif_size = 0.01;
 
 bool jumping = false;
+bool loaded = false;
 GLfloat chief_jump_count = 0;
 
 Clicked clicked_object = c_false;
@@ -123,7 +124,7 @@ void set_material(Material_M M)
 }
 
 void init(void) {
-	load_object();
+	loaded = load_object();
 
 	glClearColor(0, 0, 0, 1.0);
 	glEnable(GL_DEPTH_TEST);
@@ -259,7 +260,7 @@ void reshape(int w, int h) {
 	window_width = w;
 }
 
-void idle(void) {
+void check_collision(void) {
 	GLfloat bullet_angle, bullet_leftright, bullet_size, bullet_floating;
 	bullet_size = BULLET_SIZE;
 	bullet_leftright = chief_pos[1];
@@ -281,6 +282,12 @@ void idle(void) {
 		
 	}
 
+	glutPostRedisplay();
+
+}
+
+void idle(void) {
+	
 	glutPostRedisplay();
 }
 
@@ -525,6 +532,7 @@ void move_object(char key) {
 
 void timer(int nouse) {
 	progress_time();
+	check_collision();
 	glutPostRedisplay();
 	glutTimerFunc(30, timer, 0);
 }

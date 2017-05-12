@@ -23,7 +23,7 @@
 
 using namespace std;
 
-void load_object(void);
+bool load_object(void);
 
 void render_object(void);
 

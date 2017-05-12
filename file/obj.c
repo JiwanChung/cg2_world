@@ -6,7 +6,7 @@ extern vector<Point> obj_point_vector;
 extern vector<Point> obj_normal_vector;
 extern vector<Face> obj_face_vector;
 
-void load_object(void) {
+bool load_object(void) {
 	GLfloat x,y,z;
 	Point vertex, normal;
 	Face face;
@@ -24,7 +24,7 @@ void load_object(void) {
 	filepointer = fopen(filename, "r");
 	if (!filepointer) {
 		printf("No file!\n");
-		exit(1);
+		return false;
 	}
 	while ((read = getline(&line, &len, filepointer)) != -1) {
 		//printf("line:%s\n", line);
@@ -88,6 +88,7 @@ void load_object(void) {
 	}
 	//printf("p:%d, n:%d, l:%d\n", a,b,c);
 	fclose(filepointer);
+	return true;
 }
 
 void render_object(void) {
@@ -98,8 +99,8 @@ void render_object(void) {
 	glPushMatrix();
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	//glScalef(0.1,0.1,0.1);
-	static GLfloat angle = 0;
+	glRotatef(90,0,1,0);
+
 
 	glBegin(GL_TRIANGLES);
 
