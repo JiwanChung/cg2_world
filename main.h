@@ -74,6 +74,13 @@ typedef struct
 
 typedef struct
 {
+    int point[3];
+    int normal[3];
+  
+} Face;
+
+typedef struct
+{
     GLfloat angle;
     GLfloat leftright;
     GLfloat size;

@@ -11,6 +11,20 @@
 #include <stdio.h>
 #endif
 
+#ifndef string_h
+#define string_h
+#include <string.h>
+#endif
+
+#ifndef string_cpp
+#define string_cpp
+#include <string> 
+#endif
+
+using namespace std;
+
+void load_object(void);
+
 void render_object(void);
 
 #endif

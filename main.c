@@ -33,6 +33,7 @@ vector<Waa> waa_vector;
 vector<GLfloat> bullet_vector;
 vector<Point> obj_point_vector;
 vector<Point> obj_normal_vector;
+vector<Face> obj_face_vector;
 
 Material_M PolishedGold = {{0.24725, 0.2245, 0.0645, 1.0},
                          {0.34615, 0.3143, 0.0903, 1.0},
@@ -122,7 +123,7 @@ void set_material(Material_M M)
 }
 
 void init(void) {
-	
+	load_object();
 
 	glClearColor(0, 0, 0, 1.0);
 	glEnable(GL_DEPTH_TEST);

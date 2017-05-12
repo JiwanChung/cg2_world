@@ -25,4 +25,4 @@ chief.o: display/chief.c display/chief.h display/waa.h main.h
 	$(CC) -c display/chief.c display/chief.h display/waa.h main.h $(VECTOR) 
 
 obj.o: file/obj.c file/obj.h
-	$(CC) -c file/obj.c file/obj.h
+	$(CC) -c file/obj.c file/obj.h $(VECTOR) 
