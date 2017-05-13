@@ -114,13 +114,13 @@ void render_object(void) {
 			point = obj_face_vector[i].point[j];
 			normal = obj_face_vector[i].normal[j];
 			
-			temp[0] = obj_normal_vector[normal].x;
-			temp[1] = obj_normal_vector[normal].y;
-			temp[2] = obj_normal_vector[normal].z;
+			temp[0] = obj_normal_vector[normal-1].x;
+			temp[1] = obj_normal_vector[normal-1].y;
+			temp[2] = obj_normal_vector[normal-1].z;
 			glNormal3fv(temp);
-			temp[0] = obj_point_vector[point].x;
-			temp[1] = obj_point_vector[point].y;
-			temp[2] = obj_point_vector[point].z;
+			temp[0] = obj_point_vector[point-1].x;
+			temp[1] = obj_point_vector[point-1].y;
+			temp[2] = obj_point_vector[point-1].z;
 			//printf("x:%f, y:%f, z:%f\n", temp[0], temp[1], temp[2]);
 			glVertex3fv(temp);
 		}
